@@ -13,7 +13,14 @@ import {
 
 import { styles } from "../config/Styles";
 
-export function F_MenuBar(navigation, feedAvailable, feedStorage) {
+export function F_MenuBar(
+  navigation,
+  feedAvailable,
+  feedStorage,
+  feedFed,
+  defaultFeedFed,
+  defaultFeedAvailable
+) {
   return (
     <View style={styles.menubar}>
       <TouchableOpacity
@@ -22,6 +29,7 @@ export function F_MenuBar(navigation, feedAvailable, feedStorage) {
           navigation.navigate("Feed Summary", {
             feedAvailableNew: feedAvailable,
             feedStorage: feedStorage,
+            feedFed: feedFed,
           });
         }}
       >
@@ -35,6 +43,9 @@ export function F_MenuBar(navigation, feedAvailable, feedStorage) {
           navigation.navigate("Feed Entry", {
             feedAvailable: feedAvailable,
             feedStorage: feedStorage,
+            feedFed: feedFed,
+            defaultFeedFed: defaultFeedFed,
+            defaultFeedAvailable: defaultFeedAvailable,
           });
         }}
       >
@@ -43,7 +54,7 @@ export function F_MenuBar(navigation, feedAvailable, feedStorage) {
           source={require("../assets/entryicon.png")}
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => Alert.alert("", "")}>
+      <TouchableOpacity onPress={() => Alert.alert("", "Coming Soon")}>
         <Image
           style={styles.menuicon}
           source={require("../assets/logicon.png")}
@@ -54,6 +65,7 @@ export function F_MenuBar(navigation, feedAvailable, feedStorage) {
           navigation.navigate("Settings", {
             feedAvailable: feedAvailable,
             feedStorage: feedStorage,
+            feedFed: feedFed,
           });
         }}
       >

@@ -27,6 +27,7 @@ function EntryScreen({ route, navigation }) {
 
   const { feedAvailable } = route.params;
   const { feedStorage } = route.params;
+  const { feedFed } = route.params;
 
   console.log("barley storage");
   console.log("barley storage", feedStorage);
@@ -55,13 +56,18 @@ function EntryScreen({ route, navigation }) {
     console.log("barley storage", feedStorage.barley);
   };
 
+  var barStorage = "Barley: " + feedStorage.barley + "t";
+  var oatStorage = "Oats: " + feedStorage.oats + "t";
+  var lupinStorage = "Lupins: " + feedStorage.lupins + "t";
+  var pelletStorage = "Pellets: " + feedStorage.pellets + "t";
+
   return (
     <View style={styles.background}>
-      {F_MenuBar(navigation, feedAvailable, feedStorage)}
-      <Text style={styles.heading}>{feedStorage.barley}</Text>
+      {F_MenuBar(navigation, feedAvailable, feedStorage, feedFed)}
+      {/* <Text style={styles.heading}>{feedStorage.barley}</Text> */}
       <View style={styles.entryContainer}>
         <Input
-          label="Barley"
+          label={barStorage}
           placeholder="Enter barley storage capacity"
           onChangeText={(barleyInputStorage) => {
             setBarleyStorage(barleyInputStorage);
@@ -70,7 +76,7 @@ function EntryScreen({ route, navigation }) {
           textInput={defaultInputBarleyStorage}
         />
         <Input
-          label="Oats"
+          label={oatStorage}
           placeholder="Enter oats storage capacity"
           onChangeText={(oatsInputStorage) => {
             setOatsStorage(oatsInputStorage);
@@ -79,7 +85,7 @@ function EntryScreen({ route, navigation }) {
           textInput={defaultInputOatsStorage}
         />
         <Input
-          label="Lupins"
+          label={lupinStorage}
           placeholder="Enter lupins storage capacity"
           onChangeText={(lupinsInputStorage) => {
             setLupinsStorage(lupinsInputStorage);
@@ -88,7 +94,7 @@ function EntryScreen({ route, navigation }) {
           textInput={defaultInputLupinsStorage}
         />
         <Input
-          label="Pellets"
+          label={pelletStorage}
           placeholder="Enter pellets storage capacity"
           onChangeText={(pelletsInputStorage) => {
             setPelletsStorage(pelletsInputStorage);

@@ -9,14 +9,20 @@ import { Input } from "../Components/UserInput";
 import { Button } from "../Components/Button";
 import { Dropdown } from "../Components/Dropdown";
 import { storeData } from "../Components/Functions";
-console.log("done import BEGINING!!!");
 
-const clearFeed = (feedAvailable) => {
-  Alert.alert("Clear log", "Are you sure", [
+// currently feedfed and feedavailable are cleared together, maybe this should be seperated.
+const clearFeed = (
+  feedAvailable,
+  feedFed,
+  defaultFeedFed,
+  defaultFeedAvailable
+) => {
+  Alert.alert("Clear log", "Are you sure?", [
     {
       text: "Yes",
       onPress: () => {
-        clearStoredData(feedAvailable);
+        // clearStoredData(feedAvailable, "feedAvailable", defaultFeedAvailable);
+        clearStoredData(feedFed, "feedFed", defaultFeedFed);
       },
     },
     {
@@ -26,14 +32,35 @@ const clearFeed = (feedAvailable) => {
   ]);
 };
 
-const clearStoredData = async (feedAvailable) => {
-  console.log(feedAvailable.barley);
-  // await AsyncStorage.clear(); //could just storeData after setting to 0 instead of deleteing all stored items.
-  for (const feed in feedAvailable) {
-    feedAvailable[feed] = 0;
+const mutateObjectProperty = (obj) => {
+  for (const key in obj) {
+    console.log(key);
+    console.log(obj[key]);
+    console.log(typeof obj[key] === "object");
+    if (typeof obj[key] === "object") {
+      mutateObjectProperty(obj[key]);
+    } else {
+      obj[key] = 0;
+    }
   }
-  storeData("feedAvailable", feedAvailable);
+};
+
+const clearStoredData = async (varToBeCleared, storeName, defaultValue) => {
+  // for (const key in varToBeCleared) {
+  //   varToBeCleared[key] = 0;
+  // }
+  mutateObjectProperty(varToBeCleared);
+
+  // varToBeCleared = defaultValue;
+  // console.log("clear", varToBeCleared);
+  // console.log("default", defaultValue);
+
+  storeData(storeName, varToBeCleared);
+  // storeData("feedAvailable", varToBeCleared);
   console.log("feed log cleared");
+
+  // if i need to clear storage just uncomment line below.
+  await AsyncStorage.clear(); //could just storeData after setting to 0 instead of deleteing all stored items.
 };
 
 function EntryScreen({ route, navigation }) {
@@ -49,6 +76,9 @@ function EntryScreen({ route, navigation }) {
 
   const { feedAvailable } = route.params;
   const { feedStorage } = route.params;
+  const { feedFed } = route.params;
+  const { defaultFeedFed } = route.params;
+  const { defaultFeedAvailable } = route.params;
 
   const handleTopUp = () => {
     setDefaultInputBarley("");
@@ -73,6 +103,11 @@ function EntryScreen({ route, navigation }) {
   };
 
   const handleFeed = () => {
+    if (!sheepGroup) {
+      Alert.alert("Missing data", "Enter sheep group");
+      return;
+    }
+
     setDefaultInputBarley("");
     setDefaultInputOats("");
     setDefaultInputLupins("");
@@ -80,17 +115,23 @@ function EntryScreen({ route, navigation }) {
 
     if (!Number.isNaN(+barleyInput)) {
       feedAvailable.barley -= +barleyInput;
+      feedFed.barley[sheepGroup] += +barleyInput;
       // console.log(sheepGroup);
+      // console.log(feedFed.barley);
     }
     if (!Number.isNaN(+oatsInput)) {
       feedAvailable.oats -= +oatsInput;
+      feedFed.oats[sheepGroup] += +oatsInput;
     }
     if (!Number.isNaN(+lupinsInput)) {
       feedAvailable.lupins -= +lupinsInput;
+      feedFed.lupins[sheepGroup] += +lupinsInput;
     }
     if (!Number.isNaN(+barleyInput)) {
       feedAvailable.pellets -= +pelletsInput;
+      feedFed.pellets[sheepGroup] += +pelletsInput;
     }
+    storeData("feedFed", feedFed);
   };
 
   console.log("barley available");
@@ -109,8 +150,8 @@ function EntryScreen({ route, navigation }) {
 
   return (
     <View style={styles.background}>
-      {F_MenuBar(navigation, feedAvailable, feedStorage)}
-      <Text style={styles.heading}>{feedAvailable.barley}</Text>
+      {F_MenuBar(navigation, feedAvailable, feedStorage, feedFed)}
+      {/* <Text style={styles.heading}>{feedAvailable.barley}</Text> */}
       {/* <Text style={styles.heading}>{feedStorage.barley}</Text> */}
       <View style={styles.entryContainer}>
         <Input
@@ -157,7 +198,17 @@ function EntryScreen({ route, navigation }) {
         <View style={styles.buttonContainer}>
           <Button text="Top up" onPress={() => handleTopUp()} />
           <Button text="Feed" onPress={() => handleFeed()} />
-          <Button text="Clear" onPress={() => clearFeed(feedAvailable)} />
+          <Button
+            text="Clear"
+            onPress={() =>
+              clearFeed(
+                feedAvailable,
+                feedFed,
+                defaultFeedFed,
+                defaultFeedAvailable
+              )
+            }
+          />
         </View>
       </View>
     </View>

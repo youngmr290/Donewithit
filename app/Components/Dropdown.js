@@ -10,6 +10,7 @@ export function Dropdown({ dropdownData, placeholder, onChangeItem }) {
       <DropDownPicker
         items={dropdownData}
         placeholder={placeholder}
+        placeholderStyle={{ color: "#C7C7CD" }}
         containerStyle={{ height: 40 }}
         dropDownStyle={{ height: 100 }}
         zIndex={99999}

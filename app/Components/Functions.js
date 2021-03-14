@@ -14,3 +14,10 @@ export const getData = async (key, settext, defaultValue) => {
   settext(value);
   return value;
 };
+
+export function sum(obj) {
+  return Object.keys(obj).reduce(
+    (sum, key) => sum + parseFloat(obj[key] || 0),
+    0
+  );
+}
